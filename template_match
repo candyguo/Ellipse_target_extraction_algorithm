@@ -1,0 +1,46 @@
+void MatchingMethod( int, void* )
+{
+    Mat img_display;
+    img.copyTo( img_display );
+    
+    int result_cols =  img.cols - templ.cols + 1;
+    int result_rows = img.rows - templ.rows + 1;
+    
+    result.create( result_cols, result_rows, CV_32F );
+    
+    matchTemplate( img, templ, result, match_method );
+    normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );
+    
+    double minVal; double maxVal; Point minLoc; Point maxLoc;
+    Point matchLoc;
+    
+    minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
+    printf("x:%d,y:%d\n",(maxLoc.x+templ.cols/2),(maxLoc.y+templ.rows/2));
+    
+    if( match_method  == CV_TM_SQDIFF || match_method == CV_TM_SQDIFF_NORMED )
+    { matchLoc = minLoc; }
+    else
+    { matchLoc = maxLoc; }
+    
+    
+    rectangle( img_display, matchLoc, Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar(255,0,0), 2, 8, 0 );
+    rectangle( result, matchLoc, Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar::all(0), 2, 8, 0 );
+    
+    for(int i=0;i<4;i++)
+    {
+        result.at<uchar>(maxLoc)=10;
+        minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
+        printf("x:%d,y:%d\n",(maxLoc.x+templ.cols/2),(maxLoc.y+templ.rows/2));
+        matchLoc = maxLoc;
+        rectangle( img_display, matchLoc, Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar(255,0,0), 2, 8, 0 );
+        rectangle( result, matchLoc, Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar::all(0), 2, 8, 0 );
+        
+    }
+    
+    imshow("source image", img_display );
+    imshow( "result_window", result );
+    imwrite("/Users/c_c/Desktop/3.jpg", img_display);
+    imwrite("/Users/c_c/Desktop/4.jpg", result);
+    
+    return;
+}
