@@ -1,0 +1,17 @@
+    Mat srcImage = imread("/Users/c_c/Desktop/2499.bmp");  
+    Mat midImage,dstImage;
+    imshow("original image", srcImage);
+    cvtColor(srcImage,midImage, CV_BGR2GRAY);
+    GaussianBlur( midImage, midImage, Size(3,3), 2, 2 );
+    vector<Vec3f> circles;
+    HoughCircles( midImage, circles, CV_HOUGH_GRADIENT,1, 50, 120, 11, 5, 8 );
+    for( size_t i = 0; i < circles.size(); i++ )
+     {
+       Point2f center(circles[i][0], circles[i][1]);
+       int radius = cvRound(circles[i][2]);
+       circle( srcImage, center, 1, Scalar(0,255,0), 1, 8, 0 );
+       circle( srcImage, center, radius, Scalar(255,0,0), 2, 8, 0 );
+        printf("x:%.1f,y:%.1f,r:%d\n",center.x,center.y,radius);
+    }
+    imshow("final image", srcImage);
+    imwrite("/Users/c_c/Desktop/2499_hough.bmp",srcImage);
